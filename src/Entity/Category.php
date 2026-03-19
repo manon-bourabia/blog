@@ -16,11 +16,11 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 180, unique: true)]
     #[Assert\NotBlank]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, options: ['default' => '#007bff'])]
+    #[ORM\Column(length: 180, options: ['default' => '#007bff'])]
     private ?string $color = '#007bff';
 
     /**

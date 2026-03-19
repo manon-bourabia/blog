@@ -17,7 +17,7 @@
             
             {% if app.user %}
                 <span class="navbar-text ms-2 d-none d-sm-inline text-info">
-                    | Bonjour, <strong>{{ app.user.firstName }}</strong>
+                    | Bonjour,  <strong>{{ app.user.lastName }} {{ app.user.firstName }}</strong>
                 </span>
             {% endif %}
         </div>

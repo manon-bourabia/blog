@@ -6,6 +6,7 @@ use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -15,7 +16,7 @@ class Post
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180)]
     #[Assert\NotBlank(message: "Le contenu est obligatoire")]
     #[Assert\Length(min: 10, minMessage: "Le titre est trop court")]
     private ?string $title = null;
@@ -29,8 +30,9 @@ class Post
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $author = null;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     private ?Category $category = null;
@@ -38,13 +40,6 @@ class Post
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function setId(string $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getTitle(): ?string
@@ -95,12 +90,12 @@ class Post
         return $this;
     }
 
-    public function getAuthor(): ?string
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
 
-    public function setAuthor(string $author): static
+    public function setAuthor(?User $author): static
     {
         $this->author = $author;
 
