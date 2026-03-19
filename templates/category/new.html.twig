@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Catégorie{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Créer une catégorie</h2>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_row(form.name, {'label': 'Nom de la catégorie', 'attr': {'placeholder': 'Ex: Sport, Tech...'}}) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.color, {'label': 'Couleur du badge', 'attr': {'type': 'color'}}) }}
+                            <small class="text-muted">Cliquez pour choisir la couleur qui s'affichera sur le blog.</small>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Enregistrer la catégorie</button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+            
+            <div class="mt-3 text-center">
+                <a href="{{ path('app_blog_index') }}" class="text-decoration-none">← Retour au blog</a>
+                <a class="btn btn-primary" href="{{ path('app_category')}}">Voir toutes les catégories</a>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
