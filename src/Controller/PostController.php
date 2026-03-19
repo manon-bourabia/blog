@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PostController extends AbstractController
 {
-    #[Route('/blog', name: 'app_blog_index')]
+    #[Route('/', name: 'app_blog_index')]
     public function index(PostRepository $postRepository, Request $request, CategoryRepository $categoryRepository): Response
     {
         $search = $request->query->get('q');
