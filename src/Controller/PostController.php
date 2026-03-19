@@ -34,7 +34,10 @@ final class PostController extends AbstractController
         $post = new Post();
 
         $post->setCreatedAt(new \DateTimeImmutable());
-        $post->setAuthor('Jean Dupont');
+
+        $user = $this->getUser();
+
+        $post->setAuthor($user->getUserIdentifier());
 
         $form = $this->createForm(PostType::class, $post);
 
@@ -57,9 +60,9 @@ final class PostController extends AbstractController
     public function edit(Post $post, Request $request, EntityManagerInterface $em): Response
     {
 
-        $currentUser = "Jean Dupont";
+        $user = $this->getUser();
 
-        if ($post->getAuthor() !== $currentUser) {
+        if ($post->getAuthor() !== $user->getUserIdentifier()) {
             $this->addFlash('danger', 'Modification interdite : vous n’êtes pas l’auteur de cet article.');
             return $this->redirectToRoute('app_blog_index');
         }
@@ -81,5 +84,20 @@ final class PostController extends AbstractController
             'form' => $form->createView(),
             'editMode' => true
         ]);
+    }
+    #[Route('/delete/{id}', name: 'app_post_delete', methods: ['POST'])]
+    public function delete(Request $request, Post $post, EntityManagerInterface $entityManager): Response
+    {
+        if ($post->getAuthor() !== $this->getUser()->getUserIdentifier()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($post);
+            $entityManager->flush();
+            $this->addFlash('danger', 'Votre post a bien été supprimé');
+        }
+
+        return $this->redirectToRoute('app_blog_index');
     }
 }
