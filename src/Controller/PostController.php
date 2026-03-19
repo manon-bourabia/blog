@@ -62,12 +62,8 @@ final class PostController extends AbstractController
 
         $user = $this->getUser();
 
-        if ($post->getAuthor() !== $user->getUserIdentifier()) {
+        if ($post->getAuthor() !== $user->getUserIdentifier() && !$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'Modification interdite : vous n’êtes pas l’auteur de cet article.');
-            return $this->redirectToRoute('app_blog_index');
-        }
-        if ($post->isPublished()) {
-            $this->addFlash('warning', 'Impossible de modifier un article déjà publié.');
             return $this->redirectToRoute('app_blog_index');
         }
 
@@ -85,10 +81,10 @@ final class PostController extends AbstractController
             'editMode' => true
         ]);
     }
-    #[Route('/delete/{id}', name: 'app_post_delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'app_post_delete', methods: ['POST', 'GET'])]
     public function delete(Request $request, Post $post, EntityManagerInterface $entityManager): Response
     {
-        if ($post->getAuthor() !== $this->getUser()->getUserIdentifier()) {
+        if ($post->getAuthor() !== $this->getUser()->getUserIdentifier() && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
