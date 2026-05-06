@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\wamp64\\\\www\\\\blog\" -Force)",
+      "Bash(Select-Object Name, FullName)",
+      "Bash(xargs ls -la)"
+    ]
+  }
+}

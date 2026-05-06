@@ -77,5 +77,31 @@
                 </div>
             {% endfor %}
         </div>
+
+        {% if totalPages > 1 %}
+            <nav class="mt-4" aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('app_blog_index', {page: currentPage - 1, q: app.request.query.get('q'), category: app.request.query.get('category')}) }}">
+                            &laquo; Précédent
+                        </a>
+                    </li>
+
+                    {% for i in 1..totalPages %}
+                        <li class="page-item {{ i == currentPage ? 'active' : '' }}">
+                            <a class="page-link" href="{{ path('app_blog_index', {page: i, q: app.request.query.get('q'), category: app.request.query.get('category')}) }}">
+                                {{ i }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                    <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ path('app_blog_index', {page: currentPage + 1, q: app.request.query.get('q'), category: app.request.query.get('category')}) }}">
+                            Suivant &raquo;
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
     </div>
 {% endblock %}

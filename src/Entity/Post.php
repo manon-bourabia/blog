@@ -116,12 +116,16 @@ class Post
     #[Assert\Callback]
     public function validateContent(ExecutionContextInterface $executionContextInterface): void
     {
+        if ($this->content === null) {
+            return;
+        }
+
         $lineCount = substr_count($this->content, "\n") + 1;
 
         if ($lineCount > 10) {
-            $executionContextInterface->buildViolation('Lecontenu ne peut pas dépasser 10 lignes.')
-            ->atPath('content')
-            ->addViolation();
+            $executionContextInterface->buildViolation('Le contenu ne peut pas dépasser 10 lignes.')
+                ->atPath('content')
+                ->addViolation();
         }
     }
 }

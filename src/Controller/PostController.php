@@ -19,13 +19,17 @@ final class PostController extends AbstractController
     {
         $search = $request->query->get('q');
         $categoryId = $request->query->get('category');
+        $page = max(1, (int) $request->query->get('page', 1));
+        $limit = 6;
 
-        $posts = $postRepository->findBySearch($search, $categoryId);
-
+        $paginator = $postRepository->findBySearch($search, $categoryId, $page, $limit);
+        $totalPages = (int) ceil(count($paginator) / $limit);
 
         return $this->render('post/index.html.twig', [
-            'posts' => $posts,
-            'categories' => $categoryRepository->findAll()
+            'posts' => $paginator,
+            'categories' => $categoryRepository->findAll(),
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
         ]);
     }
     #[Route('/new', name: 'app_blog_new', methods: ['GET', 'POST'])]
@@ -62,7 +66,7 @@ final class PostController extends AbstractController
 
         $user = $this->getUser();
 
-        if ($post->getAuthor() !== $user->getUserIdentifier() && !$this->isGranted('ROLE_ADMIN')) {
+        if ($post->getAuthor() !== $user && !$this->isGranted('ROLE_ADMIN')) {
             $this->addFlash('danger', 'Modification interdite : vous n’êtes pas l’auteur de cet article.');
             return $this->redirectToRoute('app_blog_index');
         }
@@ -84,7 +88,7 @@ final class PostController extends AbstractController
     #[Route('/delete/{id}', name: 'app_post_delete', methods: ['POST', 'GET'])]
     public function delete(Request $request, Post $post, EntityManagerInterface $entityManager): Response
     {
-        if ($post->getAuthor() !== $this->getUser()->getUserIdentifier() && !$this->isGranted('ROLE_ADMIN')) {
+        if ($post->getAuthor() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 

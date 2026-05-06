@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,7 +23,7 @@ class PostRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-public function findBySearch(?string $query, ?string $categoryId): array
+public function findBySearch(?string $query, ?string $categoryId, int $page = 1, int $limit = 6): Paginator
 {
     $qb = $this->createQueryBuilder('p')
         ->leftJoin('p.category', 'c')
@@ -35,12 +36,14 @@ public function findBySearch(?string $query, ?string $categoryId): array
     }
 
     if ($categoryId) {
-        // On filtre par l'ID de la catégorie qui arrive de l'URL
         $qb->andWhere('c.id = :id')
            ->setParameter('id', $categoryId);
     }
 
-    return $qb->getQuery()->getResult();
+    $qb->setFirstResult(($page - 1) * $limit)
+       ->setMaxResults($limit);
+
+    return new Paginator($qb);
 }
     //    /**
     //     * @return Post[] Returns an array of Post objects
